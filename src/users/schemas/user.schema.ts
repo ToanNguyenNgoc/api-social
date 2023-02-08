@@ -5,25 +5,27 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
-  @Prop()
+  @Prop({required:true})
   email: string;
-  @Prop()
+  @Prop({required:true})
   telephone: string;
-  @Prop()
+  @Prop({required:true})
   password: string;
-  @Prop()
+  @Prop({default:'NO NAME'})
   fullname: string;
   @Prop()
   dob: string;
   @Prop()
   sex: boolean;
-  @Prop()
+  @Prop({default:1})
   status: number;
-  @Prop()
+  @Prop({default:0})
   deleted: number;
   @Prop()
   avatar: string;
-  @Prop()
+  @Prop({default:1})
   role_id: number;
+  @Prop({default:Date.now()})
+  created_at: string
 }
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -3,14 +3,20 @@
     "name": "api-social",
     "builds": [
         {
-            "src": "index.js",
+            "src": "src/main.ts",
             "use": "@vercel/node"
         }
     ],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/index.js"
+            "dest": "src/main.ts",
+            "methods": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE"
+            ]
         }
     ]
 }
