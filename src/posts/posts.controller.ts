@@ -19,7 +19,7 @@ export class PostsController {
         return this.potsService.getPosts()
     }
     @Get(':id')
-    async getPostById(@Param('id') id: string): Promise<any> {
+    async getPostById(@Param('id') id: string){
         return
     }
     @UseGuards(AuthGuard('jwt'))
