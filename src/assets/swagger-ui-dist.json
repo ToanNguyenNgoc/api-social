@@ -1,0 +1,9 @@
+{
+    "assets": [
+        {
+            "glob": "**/*.{js,css,html,png}",
+            "input": "./node_modules/swagger-ui-dist/",
+            "output": "./dist/assets/swagger-ui-dist/"
+        }
+    ]
+}
