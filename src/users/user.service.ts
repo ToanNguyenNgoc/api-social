@@ -12,7 +12,12 @@ export class UserService {
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     ) { }
-
+    async getUsers(): Promise<ResUserDto[]> {
+        return []
+    }
+    async getUserById(id: string): Promise<ResUserDto> {
+        return
+    }
     async updateUser(@Body() body: UpdateUserDto, user_id: string): Promise<ResUserDto> {
         try {
             const user: ResponseUserDoc = await this.userModel.findById(user_id)
@@ -41,5 +46,19 @@ export class UserService {
         const hashed = await bcrypt.hash(body.newPassword, salt)
         await user.updateOne({ $set: { password: hashed } })
         return { message: 'Change password success !' }
+    }
+    async profile(id: string): Promise<User> {
+        try {
+            const response: any = await this.userModel.findById(id)
+            const { password, ...user } = response._doc
+            return user
+        } catch (error) {
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: 'User not found',
+            }, HttpStatus.NOT_FOUND, {
+                cause: error
+            });
+        }
     }
 }

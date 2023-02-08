@@ -1,3 +1,4 @@
+import { PostsModule } from './posts/posts.module';
 import { UploadModule } from './upload-file/upload.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './users/user.module';
@@ -10,6 +11,7 @@ import { join } from 'path';
 
 @Module({
   imports: [
+    PostsModule,
     UploadModule,
     UserModule,
     AuthModule,

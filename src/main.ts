@@ -1,7 +1,10 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
+import moment from 'moment';
+import dayjs from 'dayjs';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,9 +13,10 @@ async function bootstrap() {
     .setTitle('Api social')
     .setDescription('The social API description')
     .setVersion('1.0')
-    .addTag('users')
     .addTag('auth')
+    .addTag('users')
     .addTag('media')
+    .addTag('posts')
     .addBearerAuth(
       {
         type: 'http',
@@ -25,9 +29,11 @@ async function bootstrap() {
       'jwt',
     )
     .build();
+  const customOptions: SwaggerCustomOptions = {
+    customSiteTitle: 'Social API Docs',
+  }
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('docs', app, document);
-
+  SwaggerModule.setup('docs', app, document, customOptions);
   await app.listen(3000);
 }
 bootstrap();
