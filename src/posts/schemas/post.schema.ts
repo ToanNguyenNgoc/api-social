@@ -1,5 +1,5 @@
 import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
-import mongoose, { HydratedDocument, Types } from "mongoose";
+import mongoose, {Types, HydratedDocument } from "mongoose";
 
 export type PostDocument = HydratedDocument<Post>;
 
@@ -20,7 +20,7 @@ export class Post {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Media'
     }])
-    media: [Types.ObjectId]
+    media: []
     @Prop({ default: 1 })
     deleted: number;
     @Prop({ default: true })

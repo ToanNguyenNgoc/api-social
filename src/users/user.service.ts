@@ -2,9 +2,15 @@ import { Body, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
-import { ChangePassUseDto, ResUserDto, UpdateUserDto } from './dto'
-import { ResponseUserDoc } from 'src/interfaces';
+import { ChangePassUseDto, QueryUsersDto, ResUserDto, UpdateUserDto } from './dto'
+import { Pagination, ResponseUserDoc } from 'src/interfaces';
 import * as bcrypt from 'bcrypt'
+import { pickBy, identity } from 'lodash';
+import { convertBoolean } from '../functions';
+
+export interface ResponseUsers extends Pagination {
+    users: User[]
+}
 
 
 @Injectable()
@@ -12,8 +18,34 @@ export class UserService {
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     ) { }
-    async getUsers(): Promise<ResUserDto[]> {
-        return []
+    async getUsers(query: QueryUsersDto): Promise<ResponseUsers> {
+        const page = parseInt(`${query.page ?? 1}`)
+        const limit = parseInt(`${query.limit ?? 15}`)
+        const filterOptions = pickBy(
+            {
+                fullname: { $regex: `${query.keyword ?? ''}`, $options: 'i' },
+                sex: query.sex ? convertBoolean(query.sex) : '',
+            }, identity
+        )
+        const response = await this.userModel
+            .aggregate([
+                { $match: filterOptions },
+                { $match: query.sex ? { sex: convertBoolean(query.sex) } : {} },
+                { $project: { password: 0 } },
+                { $skip: ((page * limit) - limit) },
+                { $limit: limit }
+            ])
+        const count = await this.userModel
+            .find(filterOptions)
+            .find(query.sex ? { sex: convertBoolean(query.sex) } : {})
+            .count()
+        return {
+            users: response,
+            current_page: parseInt(`${page}`),
+            per_page: parseInt(`${limit}`),
+            total: count,
+            total_page: Math.ceil(count / limit)
+        }
     }
     async getUserById(id: string): Promise<ResUserDto> {
         return

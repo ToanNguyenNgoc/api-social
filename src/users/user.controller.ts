@@ -2,12 +2,12 @@
 https://docs.nestjs.com/controllers#controllers
 */
 
-import { Body, Controller, Get, Param, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { UserService } from './user.service';
 import { Request } from 'express'
 import { AuthGuard } from '@nestjs/passport';
-import { ChangePassUseDto, UpdateUserDto } from './dto';
+import { ChangePassUseDto, QueryUsersDto, UpdateUserDto } from './dto';
 // UI Swagger
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 
@@ -42,8 +42,8 @@ export class UserController {
         return this.userService.changePassword(user.id, body)
     }
     @Get('/')
-    async getUsers(): Promise<any> {
-        return this.userService.getUsers()
+    async getUsers(@Query() query: QueryUsersDto){
+        return this.userService.getUsers(query)
     }
 
     @Get('/:id')

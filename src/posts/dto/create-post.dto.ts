@@ -10,6 +10,5 @@ export class CreatePostDto {
     @ApiProperty()
     readonly content: string;
     @ApiProperty()
-    @IsArray()
-    readonly media_id: [string]
+    readonly media: []
 }
