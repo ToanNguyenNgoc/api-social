@@ -5,9 +5,17 @@
         {
             "src": "src/main.ts",
             "use": "@vercel/node"
+        },
+        {
+            "src": "public/**",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
+        {
+            "src": "/swagger/(.*)",
+            "dest": "/swagger/index.html"
+        },
         {
             "src": "/(.*)",
             "dest": "src/main.ts",
