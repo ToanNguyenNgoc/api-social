@@ -1,0 +1,40 @@
+service: api-social-01
+
+useDotenv: true
+
+	
+package:
+  individually: true
+  patterns:
+    - '!.git/**'
+    - '!test/**'
+    - '!e2e/**'
+    - '!src/**'
+    - '!node_modules/**'
+
+plugins:
+  - serverless-offline
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  environment:
+    MONGODB_URI: ${env:MONGODB_URI}
+
+    JWT_SECRET_KEY: ${env:JWT_SECRET_KEY}
+    NODE_ENV: ${env:NODE_ENV}
+
+    CLOUND_NAME: ${env:CLOUND_NAME}
+    CL_API_KEY: ${env:CL_API_KEY}
+    CL_API_SECRET_KET: ${env:CL_API_SECRET_KET}
+
+functions:
+  main:
+    handler: dist/serverless.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'

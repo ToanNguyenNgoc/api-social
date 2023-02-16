@@ -37,6 +37,6 @@ async function bootstrap() {
   app.useStaticAssets(path.join(__dirname, 'assets/swagger-ui-dist/'), {
     prefix: '/swagger'
   });
-  await app.listen(3000);
+  await app.listen(3003);
 }
 bootstrap();
