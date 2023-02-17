@@ -1,3 +1,4 @@
+import { CommentModule } from './comments/comment.module';
 import { ChatModule } from './events/chat/chat.module';
 import { PostsModule } from './posts/posts.module';
 import { UploadModule } from './upload-file/upload.module';
@@ -12,6 +13,7 @@ import { join } from 'path';
 
 @Module({
   imports: [
+    CommentModule,
     ChatModule,
     PostsModule,
     UploadModule,

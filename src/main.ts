@@ -17,6 +17,7 @@ async function bootstrap() {
     .addTag('users')
     .addTag('media')
     .addTag('posts')
+    .addTag('comments')
     .addBearerAuth(
       {
         type: 'http',
@@ -33,7 +34,7 @@ async function bootstrap() {
     customSiteTitle: 'Social API Docs',
   }
   const document = SwaggerModule.createDocument(app, options);
-  SwaggerModule.setup('swagger', app, document, customOptions);
+  SwaggerModule.setup('docs', app, document, customOptions);
   app.useStaticAssets(path.join(__dirname, 'assets/swagger-ui-dist/'), {
     prefix: '/swagger'
   });

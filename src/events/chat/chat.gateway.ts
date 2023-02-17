@@ -9,7 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({cors:['http://localhost:3000','https://beautyx-spa.web.app']})
+@WebSocketGateway({cors:['*']})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
     
     @WebSocketServer()

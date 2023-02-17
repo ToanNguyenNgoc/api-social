@@ -15,20 +15,23 @@ export class AuthService {
     constructor(
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
         private readonly jwtService: JwtService,
-        private readonly configService:ConfigService
+        private readonly configService: ConfigService
     ) { }
     async register(createUserDto: CreateUserDto): Promise<any> {
-        const userOld = await this.userModel.findOne({ telephone: createUserDto.telephone })
-        if (userOld) {
+        try {
+            const salt = await bcrypt.genSalt(10)
+            const hashed = await bcrypt.hash(createUserDto.password, salt)
+            const createUser = await this.userModel.create({ ...createUserDto, password: hashed })
+            return createUser;
+        } catch (error) {
+            let message = error.message
+            if (error.keyPattern.email) message = 'Email belong to another account'
+            if (error.keyPattern.telephone) message = 'Telephone belong to another account'
             throw new HttpException({
                 status: HttpStatus.BAD_REQUEST,
-                error: 'The telephone has already been taken'
+                error: message
             }, HttpStatus.BAD_REQUEST)
         }
-        const salt = await bcrypt.genSalt(10)
-        const hashed = await bcrypt.hash(createUserDto.password, salt)
-        const createUser = await this.userModel.create({ ...createUserDto, password: hashed })
-        return createUser;
     }
     async login(login: LoginDto): Promise<ResponseUserDto> {
         const response: any = await this.userModel.findOne({ telephone: login.telephone })
@@ -46,10 +49,22 @@ export class AuthService {
             }, HttpStatus.FORBIDDEN)
         }
         const { password, ...user } = response._doc
-        return { ...user, token: await this.generateToken(response._id, response.role_id) }
+        return {
+            ...user, token: await this.generateToken(
+                response._id,
+                response.role_id,
+                response.fullname,
+                response.avatar
+            )
+        }
     }
-    async generateToken(id: Types.ObjectId, role_id: number): Promise<string> {
-        return this.jwtService.signAsync({ id: id, role_id: role_id }, {
+    async generateToken(
+        id: Types.ObjectId,
+        role_id: number,
+        fullname: string,
+        avatar: string
+    ): Promise<string> {
+        return this.jwtService.signAsync({ id: id, role_id: role_id, fullname: fullname, avatar: avatar }, {
             expiresIn: '10d',
             secret: this.configService.get('JWT_SECRET_KEY')
         })
