@@ -66,7 +66,8 @@ export class AuthService {
     ): Promise<string> {
         return this.jwtService.signAsync({ id: id, role_id: role_id, fullname: fullname, avatar: avatar }, {
             expiresIn: '10d',
-            secret: this.configService.get('JWT_SECRET_KEY')
+            // secret: this.configService.get('JWT_SECRET_KEY')
+            secret:'141'
         })
     }
     async profile(id: string): Promise<User> {

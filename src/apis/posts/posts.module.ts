@@ -2,16 +2,21 @@
 https://docs.nestjs.com/modules
 */
 
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { PostsController } from './posts.controller';
 import { PostsService } from './posts.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Post, PostSchema, } from './schemas';
 import { JwtModule } from '@nestjs/jwt';
+import {Comment, CommentSchema} from '../comments/schemas'
 
 @Module({
     imports: [
-        MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
+        CacheModule.register({}),
+        MongooseModule.forFeature([
+            { name: Post.name, schema: PostSchema },
+            {name:Comment.name, schema:CommentSchema}
+        ]),
         JwtModule.register({}),
     ],
     controllers: [PostsController],

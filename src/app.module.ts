@@ -1,10 +1,10 @@
-import { CommentModule } from './comments/comment.module';
+import { CommentModule } from './apis/comments/comment.module';
 import { ChatModule } from './events/chat/chat.module';
-import { PostsModule } from './posts/posts.module';
-import { UploadModule } from './upload-file/upload.module';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './users/user.module';
-import { Module } from '@nestjs/common';
+import { PostsModule } from './apis/posts/posts.module';
+import { UploadModule } from './apis/upload-file/upload.module';
+import { AuthModule } from './apis/auth/auth.module';
+import { UserModule } from './apis/users/user.module';
+import {  Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { CloudinaryModule } from 'nestjs-cloudinary'

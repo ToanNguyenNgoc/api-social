@@ -6,7 +6,7 @@ import { ChangePassUseDto, QueryUsersDto, ResUserDto, UpdateUserDto } from './dt
 import { Pagination, ResponseUserDoc } from 'src/interfaces';
 import * as bcrypt from 'bcrypt'
 import { pickBy, identity } from 'lodash';
-import { convertBoolean } from '../functions';
+import { convertBoolean } from '../../functions';
 
 export interface ResponseUsers extends Pagination {
     users: User[]

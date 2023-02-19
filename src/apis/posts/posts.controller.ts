@@ -1,6 +1,6 @@
 
 
-import { Body, Controller, Delete, Param, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, CacheInterceptor, Controller, Delete, Param, Query, Render, Req, UseGuards, UseInterceptors } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Get, Post, Put } from '@nestjs/common'
@@ -15,8 +15,9 @@ export class PostsController {
         private readonly potsService: PostsService
     ) { }
     @Get()
+    @UseInterceptors(CacheInterceptor)
     async getPosts(@Query() query: QueryPostDto): Promise<any> {
-        return this.potsService.getPosts(query)
+        return this.potsService.getPosts(query);
     }
     @Get(':id')
     async getPostById(@Param('id') id: string) {

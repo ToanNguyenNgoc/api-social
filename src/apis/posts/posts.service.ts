@@ -8,7 +8,9 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePostDto, QueryPostDto } from './dto';
 import { Pagination, ResponsePostDoc } from 'src/interfaces';
-import { pickBy, identity } from 'lodash'
+import { pickBy, identity } from 'lodash';
+import Promise from 'bluebird'
+import { Comment, CommentDocument } from '../comments/schemas'
 
 interface ResponsePosts extends Pagination {
     data: Post[]
@@ -18,36 +20,45 @@ interface ResponsePosts extends Pagination {
 export class PostsService {
     constructor(
         @InjectModel(Post.name) private readonly postModel: Model<PostDocument>,
+        @InjectModel(Comment.name) private readonly commentModel: Model<CommentDocument>
+
     ) { }
     async getPosts(@Query() query: QueryPostDto): Promise<ResponsePosts> {
         try {
             let include: string[]
-        if (!query.include) { include = [] }
-        if (query.include) {
-            include = query.include.split('|')
-        }
-        const filterOptions = pickBy({
-            deleted: '1',
-            user: query.user_id,
-            title: { $regex: `${query.keyword ?? ''}`, $options: 'i' }
-        }, identity)
-        const page = query.page ?? 1
-        const limit = query.limit ?? 15
-        const response = await this.postModel
-            .find(filterOptions)
-            .populate(include)
-            .populate('user', '-password')
-            .sort({ createdAt: -1 })
-            .skip((page * limit) - limit)
-            .limit(limit)
-        const count = await this.postModel.find(filterOptions).count()
-        return {
-            data: response,
-            current_page: parseInt(`${page}`),
-            per_page: parseInt(`${limit}`),
-            total: count,
-            total_page: Math.ceil(count / limit)
-        }
+            if (!query.include) { include = [] }
+            if (query.include) {
+                include = query.include.split('|')
+            }
+            const filterOptions = pickBy({
+                deleted: '1',
+                user: query.user_id,
+                title: { $regex: `${query.keyword ?? ''}`, $options: 'i' }
+            }, identity)
+            const page = query.page ?? 1
+            const limit = query.limit ?? 15
+            const response = await this.postModel
+                .find(filterOptions)
+                .populate(include)
+                .populate('user', '-password')
+                .sort({ createdAt: -1 })
+                .skip((page * limit) - limit)
+                .limit(limit)
+            const count = await this.postModel.find(filterOptions).count()
+            let posts = response
+            if (query.comment_count) {
+                posts = await Promise.map(response, async (post) => {
+                    const comment_count = await this.commentModel.find({ commentable_id: post._id, type: 'POST' }).count()
+                    return { ...post._doc, comment_count: comment_count }
+                })
+            }
+            return {
+                data: posts,
+                current_page: parseInt(`${page}`),
+                per_page: parseInt(`${limit}`),
+                total: count,
+                total_page: Math.ceil(count / limit)
+            }
         } catch (error) {
             throw new HttpException({
                 status: HttpStatus.NOT_FOUND,

@@ -4,11 +4,15 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
+import { join } from 'path';
 
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe())
+  app.useStaticAssets(join(__dirname, '..', 'src/public'));
+  app.setBaseViewsDir(join(__dirname, '..', 'src/views'));
+  app.setViewEngine('hbs');
   const options = new DocumentBuilder()
     .setTitle('Api social')
     .setDescription('The social API description')

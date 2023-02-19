@@ -55,7 +55,7 @@ export class CommentService {
         }
     }
     async get(query: QueryCommentDTO): Promise<ResponseComments> {
-        const filter = {type:'POST', commentable_id:query.commentable_id}
+        const filter = { type: 'POST', commentable_id: query.commentable_id }
         const page = query.page ?? 1
         const limit = query.limit ?? 15
         const response = await this.commentModel

@@ -11,4 +11,6 @@ export class QueryPostDto {
     readonly include: string
     @ApiProperty({ required: false })
     readonly user_id: string
+    @ApiProperty({required:false})
+    readonly comment_count:boolean
 }
